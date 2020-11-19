@@ -1,0 +1,50 @@
+.menu-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 999;
+  -webkit-app-region: drag;
+  background-size: cover;
+}
+
+.menu-bar.morning {
+  background-position: bottom;
+  background-image: url("../img/morning2.jpg");
+}
+
+.menu-bar.midday {
+  background-image: url("../img/midday.jpg");
+}
+
+.menu-bar.evening {
+  background-image: url("../img/night.jpg");
+}
+
+.menubar-btn {
+  -webkit-app-region: no-drag;
+  height: 100%;
+  padding: 0 15px;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+i {
+  color: white;
+}
+
+.menubar-btn:hover {
+  background: rgba(221, 221, 221, 0.2);
+}
+
+#close-btn:hover {
+  background: red;
+}
+/*# sourceMappingURL=menu-bar.css.map */

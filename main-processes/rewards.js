@@ -1,0 +1,5 @@
+editReward()
+addReward()
+deleteReward()
+getRewards()
+getRandom(difficulty)

@@ -1,55 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/welcome.css">
-    <link rel="stylesheet" href="assets/css/welcome.css">
-    <link rel="stylesheet" href="assets/css/welcome.css">
-
-    <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script>
-    <!-- <link rel="import" href="sections/windows/windows.html" -->
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/menu-bar.css">
+  <link rel="stylesheet" href="assets/css/main-content.css">
+  <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-  <!--
-  <nav class="nav js-nav">
-    <header class="nav-header">
-      <h1 class="nav-title">Dream Catcher</h1>
-    </header>
-
-    <div class="nav-item u-category-goals">
-      <h5 class="nav-category">
-        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-windows"></use></svg>
-        Goals
-      </h5>
-      <button type="button" id="button-overview" data-section="overview" class="nav-button">Goal Overview</button>
-      <button type="button" id="button-create-goal" data-section="create-goal" class="nav-button">Add new goal</button>
-    </div>
-
-    <footer class="nav-footer">
-      <button type="button" id="button-welcome" data-modal="welcome" class="nav-footer-button">Welcome Screen</button>
-    </footer>
-  </nav>
-  -->
-  <div id="menu-bar">
+  <div class="menu-bar">
     <button class="menubar-btn" id="minimize-btn"><i class="fas fa-window-minimize"></i></button>
     <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
     <button class="menubar-btn" id="close-btn"><i class="fas fa-times"></i></button>
   </div>
 
-  <header class="welcome-greeting">
-    <h1 id="first-welcome" class="hide">Welcome to Dream Catcher!</h1>
-  </header>
-  <main class="content">
-    <form id="name-entry-form" class="hide">
-      <input id="name-entry" type="text" placeholder="Please enter your name">
-    </form>
+  <main class="main-content">
+    <nav class="navigation">
+      <button type="button" data-section="overview" class="nav-button top-nav">Overview</button>
+      <button type="button" data-section="journal" class="nav-button">Reflections</button>
+      <button type="button" data-section="rewards" class="nav-button">Rewards</button>
+      <button type="button" data-section="settings" class="nav-button">Settings</button>
+    </nav>
+    <div class="section-content"></div>
   </main>
 
   <script>
-    require('./assets/scripts/greeting')
-    require('./assets/scripts/menu-btns')
+    require('./assets/renderers/imports')
+    require('./assets/renderers/theme')
+    require('./assets/renderers/menu-btns')
+    require('./assets/renderers/nav')
   </script>
 </body>
 </html>

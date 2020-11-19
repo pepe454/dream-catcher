@@ -1,18 +1,21 @@
-const { app, BrowserWindow } = require('electron')
 const path = require("path")
+const glob = require('glob')
+const { app, BrowserWindow } = require('electron')
 
+let win = null
+const debug = /--debug/.test(process.argv[2])
+
+// allow real-time updates to take changes
 try {
   require('electron-reloader')(module);
 } catch (_) {}
 
-const debug = /--debug/.test(process.argv[2])
-
 if (process.mas) app.setName('Dream Catcher')
-
-let win = null
 
 function initialize() {
   makeSingleInstance()
+  //FIXME
+  // loadMains()
 
   function createWindow () {
     win = new BrowserWindow({
@@ -23,7 +26,7 @@ function initialize() {
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
-        preload: path.join(__dirname, "main-processes", "menu.js")
+        preload: path.join(__dirname, "preload", "menu.js")
       }
     })
 
@@ -31,21 +34,17 @@ function initialize() {
     if (debug) {
       win.webContents.openDevTools()
     }
-
     win.on('closed', () => {
       win = null
     })
-
   }
 
   app.whenReady().then(createWindow)
-
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit()
     }
   })
-
   app.on('activate', () => {
     if (win == null) {
       createWindow()
@@ -57,13 +56,18 @@ function initialize() {
 function makeSingleInstance () {
   if (process.mas) return
   app.requestSingleInstanceLock()
-
   app.on('second-instance', () => {
     if (win) {
       if (win.isMinimized()) win.restore()
       win.focus()
     }
   })
+}
+
+// Require each JS file in the main-process dir
+function loadMains () {
+  const files = glob.sync(path.join(__dirname, 'main-processes/**/*.js'))
+  files.forEach((file) => { require(file) })
 }
 
 initialize()

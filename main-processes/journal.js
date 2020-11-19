@@ -1,0 +1,4 @@
+createEntry()
+editEntry()
+deleteEntry()
+getNamesAndDates()

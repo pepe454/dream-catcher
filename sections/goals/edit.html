@@ -1,0 +1,16 @@
+<body>
+  <div class="app-content hide" id="single-goal-section">
+    <form id="goal-name-form">
+      <input data-section="single-goal" type="text" id="goal-name" name="goal-name" placeholder="Goal title here...">
+      <ul class="goal-task-list"></ul>
+      <form class="" id="task-entry-form">
+        <label for="task-name">Task Title: </label>
+        <input type="text" id="task-name" name="task-name"><br>
+        <label for="task-difficulty">Difficulty (between 1 and 5)</label>
+        <input type="range" id="task-difficulty" name="task-difficulty" min="0" max="5" step="1"><br>
+        <input type="submit" data-section="single-goal" value="Add Task">
+      </form>
+      <input type="submit" data-section="single-goal" value="Save">
+    </form>
+  </div>
+</body>
