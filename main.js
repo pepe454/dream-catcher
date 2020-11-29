@@ -1,21 +1,20 @@
-const path = require("path")
+const path = require('path')
 const glob = require('glob')
 const { app, BrowserWindow } = require('electron')
+const Store = require('electron-store');
 
-let win = null
-const debug = /--debug/.test(process.argv[2])
+let win = null;
+const debug = /--debug/.test(process.argv[2]);
 
 // allow real-time updates to take changes
 try {
   require('electron-reloader')(module);
 } catch (_) {}
 
-if (process.mas) app.setName('Dream Catcher')
-
 function initialize() {
-  makeSingleInstance()
-  //FIXME
-  // loadMains()
+  makeSingleInstance();
+  initStore();
+  loadMains();
 
   function createWindow () {
     win = new BrowserWindow({
@@ -28,46 +27,54 @@ function initialize() {
         enableRemoteModule: true,
         preload: path.join(__dirname, "preload", "menu.js")
       }
-    })
+    });
 
     win.loadFile('index.html')
     if (debug) {
-      win.webContents.openDevTools()
+      win.webContents.openDevTools();
     }
     win.on('closed', () => {
-      win = null
-    })
+      win = null;
+    });
   }
 
-  app.whenReady().then(createWindow)
+  app.whenReady().then(createWindow);
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      app.quit()
+      app.quit();
     }
-  })
+  });
   app.on('activate', () => {
     if (win == null) {
-      createWindow()
+      createWindow();
     }
-  })
+  });
 }
 
 // ensure that only one window is open at a time
 function makeSingleInstance () {
-  if (process.mas) return
-  app.requestSingleInstanceLock()
+  app.requestSingleInstanceLock();
   app.on('second-instance', () => {
     if (win) {
-      if (win.isMinimized()) win.restore()
-      win.focus()
+      if (win.isMinimized()) win.restore();
+      win.focus();
     }
   })
 }
 
-// Require each JS file in the main-process dir
-function loadMains () {
-  const files = glob.sync(path.join(__dirname, 'main-processes/**/*.js'))
-  files.forEach((file) => { require(file) })
+function initStore () {
+  let store = new Store();
+  let keys = ['journal', 'goals', 'rewards'];
+  keys.forEach(key => {
+    if (!store.has(key))
+      store.set(key, {});
+  });
 }
 
-initialize()
+// Require each JS file in the main-process dir
+function loadMains () {
+  const files = glob.sync(path.join(__dirname, 'main-processes/**/*.js'));
+  files.forEach((file) => { require(file) });
+}
+
+initialize();
