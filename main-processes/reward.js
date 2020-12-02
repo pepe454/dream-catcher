@@ -1,5 +1,23 @@
 const Store = require('electron-store');
+const {ipcMain} = require('electron')
+
 let store = new Store();
+
+ipcMain.on('rewards-request', (event, arg) => {
+  console.log(arg); 
+  let payload = null; 
+  if (arg.command == 'getRewards')
+    payload = getRewards(); 
+  else if (arg.command == 'getRandomReward')
+    payload = getRandomReward();
+  else if (arg.command == 'setReward')
+    payload = setReward(arg.title, arg.difficulty);
+  else if (arg.command == 'deleteReward')
+    payload = deleteReward(arg.title);
+  else
+    payload = 'Invalid command!';
+  event.sender.send('rewards-reply', payload);
+})
 
 function getRewards() {
   return store.get('rewards');
@@ -12,18 +30,23 @@ function setReward(title, difficulty) {
   else
     rewards[title] = difficulty;
   store.set('rewards', rewards);
+  return [title, difficulty, 0];
 }
 
 function deleteReward(title) {
   if (!store.has(`rewards.${title}`))
-    return false;
+    return `Reward with title ${title} does not exist`;
   store.delete(`rewards.${title}`);
-  return true; 
+  return 'Reward deleted successfully'; 
 }
 
 function getRandomReward(difficulty) {
   let keys = Object.keys(store.get('rewards'));
   let len = keys.length; 
+  if (len == 0)
+    return 'There are no rewards saved'; 
+
+  let count = 0; 
   while(true) {
     let index = Math.floor(Math.random() * len); 
     let key = keys[index];
@@ -33,6 +56,9 @@ function getRandomReward(difficulty) {
     // within difficulty +/- 1 of the reward 
     if ((currDiff <= difficulty + 1) && (currDiff >= difficulty - 1))
       return [key, difficulty];
+    else if (count == 5)
+      return [key, difficulty];
+    count++; 
   }
 }
 

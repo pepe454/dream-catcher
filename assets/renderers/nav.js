@@ -1,8 +1,10 @@
 document.body.addEventListener('click', (event) => {
   console.log(event)
   if (event.target.dataset.section) {
-    handleSectionTrigger(event)
+    handleSectionTrigger(event);
+    console.log("switch successful");
   }
+  console.log(event)
 })
 
 function handleSectionTrigger (event) {

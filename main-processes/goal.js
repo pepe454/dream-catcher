@@ -1,5 +1,29 @@
 const Store = require('electron-store');
+const {ipcMain} = require('electron')
+
 let store = new Store();
+
+ipcMain.on('goals-request', (event, arg) => {
+  console.log(arg);
+  let payload = null; 
+  if (arg.command == 'goalsAndProgress')
+    payload = getGoalsAndProgress(); 
+  else if (arg.command == 'getGoal')
+    payload = getGoal(arg.title);
+  else if (arg.command == 'setGoal')
+    payload = setGoal(arg.title, arg.taskList);
+  else if (arg.command == 'setTask')
+    payload = setTask(arg.title, arg.taskName, arg.difficulty, arg.completed);
+  else if (arg.command == 'createGoal')
+    payload = createGoal(arg.title, arg.taskList);
+  else if (arg.command == 'deleteGoal')
+    payload = deleteGoal(arg.title);
+  else if (arg.command == 'deleteTask')
+    payload = addTask(arg.title, arg.taskName);
+  else
+    payload = 'Invalid command!';
+  event.sender.send('goals-reply', payload);
+})
 
 function getGoalsAndProgress() {
   let goalsAndProgress = new Array(); 
@@ -22,14 +46,17 @@ function setGoal(title, taskList) {
   let actualProgress = 0;
   let requiredProgress = 0; 
   let keys = Object.keys(taskList);
-  console.log(keys);
   keys.forEach(task => {
     let difficulty = taskList[task].difficulty;
     requiredProgress += difficulty; 
     if (taskList[task].completed)
       actualProgress += difficulty;
   });
-  let progress = Math.ceil(actualProgress / requiredProgress * 100);
+  let progress = null;
+  if (requiredProgress == 0)
+    progress = 0; 
+  else
+    progress = Math.ceil(actualProgress / requiredProgress * 100);
 
   let goals = store.get('goals');
   if (Object.keys(goals).includes(title)) {
@@ -42,13 +69,29 @@ function setGoal(title, taskList) {
     }
   }
   store.set('goals', goals);
+  return 'Goal updated successfully'; 
+}
+
+function setTask(title, taskName, difficulty, completed=false) {
+  if (!store.has(`goals.${title}`))
+    createGoal(title, {});
+  let goal = store.get(`goals.${title}`);
+  goal.taskList[taskName] = {'difficulty': difficulty, 'completed': completed};
+  return [taskName, difficulty, completed]; 
+}
+
+function createGoal(title, taskList) {
+  if (store.has(`goals.${title}`))
+    return 'A goal with the same title already exists';
+  setGoal(title, taskList);
+  return 'Goal created successfully';
 }
 
 function deleteGoal(title) {
   if (!store.has(`goals.${title}`))
-    return false;
+    return `Goal with ${title} does not exist`;  
   store.delete(`goals.${title}`);
-  return true; 
+  return 'Goal deleted successfully'; 
 }
 
 function testSuite() {

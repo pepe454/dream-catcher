@@ -17,19 +17,73 @@
 
   <main class="main-content">
     <nav class="navigation">
-      <button type="button" data-section="overview" class="nav-button top-nav">Overview</button>
-      <button type="button" data-section="journal" class="nav-button">Reflections</button>
-      <button type="button" data-section="rewards" class="nav-button">Rewards</button>
-      <button type="button" data-section="settings" class="nav-button">Settings</button>
+      <button class="nav-button top-nav" type="button" data-section="overview">Overview</button>
+      <button class="nav-button" type="button" data-section="journal">Reflections</button>
+      <button class="nav-button" type="button" data-section="rewards">Rewards</button>
+      <button class="nav-button" type="button" data-section="settings">Settings</button>
     </nav>
-    <div class="section-content"></div>
+    <div class="section-content">
+      <div class="app-content" id="overview-section">
+        <h1 class="page-title">Goals Overview</h1>
+        <ul class="page-list" id="goals-list"></ul>
+        <button class="new-item" type="button" data-section="single-goal">Add a new goal</button>
+      </div>
+      <div class="app-content hide" id="single-goal-section">
+        <input class="title-input" id="goal-name" type="text" placeholder="Goal title here...">
+        <h4>After adding the title, begin adding tasks below</h4>
+        <ul class="updating-list" id="goal-task-list"></ul>
+        <form class="updating-form" id="task-entry-form">
+          <input id="task-name" type="text" placeholder="Enter task name here..."><br>
+          <label for="task-difficulty">Difficulty (between 1 and 5)</label>
+          <input id="task-difficulty" type="range" name="task-difficulty" min="1" max="5" step="1"><br>
+          <input class="submit-input" type="submit" data-section="single-goal" value="Add Task">
+        </form>
+        <button class="save-button" id="save-goal-button" type="button" data-section="overview">Save goal</button>
+      </div>
+      <div class="app-content hide" id="journal-section">
+        <h1 class="page-title">Entries</h1>
+        <ul class="page-list" id="journal-entries-list"></ul>
+        <button class="new-item" type="button" data-section="single-entry">Add new entry</button>
+      </div>
+      <div class="app-content hide" id="single-entry-section">
+        <form id="journal-entry-form">
+          <input class="title-input" id="entry-name" type="text" name="entry-name" placeholder="Journal entry title here..."><br>
+          <input id="entry-text-input" type="text"><br>
+          <input class="save-button" type="submit" data-section="journal" value="Save entry">
+        </form>
+      </div>
+      <div class="app-content hide" id="rewards-section">
+        <h1 class="page-title">Rewards</h1>
+        <ul class="updating-list" id="rewards-list"></ul>
+        <form class="updating-form" id="reward-entry-form">
+          <label for="reward-title">Reward description: </label>
+          <input id="reward-title" type="text" name="reward-title"><br>
+          <label for="reward-difficulty">Reward size: choose a larger reward for a more difficult task </label>
+          <input id="reward-difficulty" type="range" name="reward-difficulty" min="0" max="5" step="1"><br>
+          <input class="submit-input" type="submit" value="Add Reward">
+        </form>
+      </div>
+      <div class="app-content hide" id="settings-section">
+        <h1>Settings</h1>
+        <form id="settings-form">
+          <label for="welcome-setting">Welcome page: </label>
+          <input id="welcome-setting" type="checkbox" name="welcome-setting"><br>
+          <label for="theme-setting">Themes: </label>
+          <input id="theme-setting" type="checkbox" name="theme-setting"><br>
+          <label for="details-setting">Display details and tips: </label>
+          <input id="detail-setting" type="checkbox" name="detail-setting"><br>
+          <input class="save-button" type="submit" data-section="settings" value="Update settings">
+        </form>
+      </div>
+    </div>
   </main>
 
   <script>
-    require('./assets/renderers/imports')
-    require('./assets/renderers/theme')
     require('./assets/renderers/menu-btns')
     require('./assets/renderers/nav')
+    require('./assets/renderers/theme')
+    require('./assets/renderers/init')
+    require('./assets/renderers/forms')
   </script>
 </body>
 </html>

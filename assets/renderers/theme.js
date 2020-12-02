@@ -5,7 +5,7 @@ async function setGreetingAndBGImage () {
   let nighttime = new Date()
   morning.setHours(4)
   afternoon.setHours(12)
-  nighttime.setHours(18)
+  nighttime.setHours(16)
 
   let todString = ''
   if (timeOfDay < morning)
@@ -22,4 +22,4 @@ async function setGreetingAndBGImage () {
   document.querySelector('.main-content').classList.add(todString)
 }
 
-setGreetingAndBGImage()
+setGreetingAndBGImage();
