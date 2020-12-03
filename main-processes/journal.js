@@ -18,7 +18,7 @@ ipcMain.on('journal-request', (event, arg) => {
     payload = deleteEntry(arg.title);
   else
     payload = 'Invalid command!';
-  event.sender.send('journal-reply', payload);
+  event.sender.send('journal-load-reply', payload);
 })
 
 function getNamesAndDates() {
@@ -35,7 +35,7 @@ function getEntry(title) {
   if (!store.has(`journal.${title}`))
     return null;
   let entry = store.get(`journal.${title}`);
-  return entry;
+  return [[title, entry['lastEdited']]]; 
 }
 
 function setEntry(title, text) {

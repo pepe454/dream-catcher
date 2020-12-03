@@ -1,10 +1,25 @@
+const {ipcRenderer} = require('electron')
+
 document.body.addEventListener('click', (event) => {
-  console.log(event)
-  if (event.target.dataset.section) {
-    handleSectionTrigger(event);
-    console.log("switch successful");
+  // load things with this
+  if (event.target.dataset.request) {
+    const request = `${event.target.dataset.request}-request`;
+    const args = {
+      'command': event.target.dataset.command, 
+      'title': event.target.dataset.title
+    }
+    if (event.target.dataset.command === 'setTask') {
+      args['taskName'] = event.target.dataset.taskname;
+      // see if the checkbox is checked
+      console.log(event.target.checked); 
+      args['completed'] = !event.target.hasAttribute('checked'); 
+      args['difficulty'] = event.target.dataset.difficulty;
+    }
+    ipcRenderer.send(request, args); 
   }
-  console.log(event)
+
+  if (event.target.dataset.section)
+    handleSectionTrigger(event);
 })
 
 function handleSectionTrigger (event) {

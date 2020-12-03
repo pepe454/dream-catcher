@@ -1,72 +1,85 @@
 const {ipcRenderer} = require('electron')
 
 async function addGoalsAndProgress() {
-  console.log('sending out goals request');
   ipcRenderer.send('goals-request', {'command':'goalsAndProgress'}); 
 }
 
-async function addRewardsAndDifficulty() {
-  console.log('sending out rewards request');
-  ipcRenderer.send('rewards-request', {'command':'getRewards'}); 
-}
-
 async function addEntriesAndDates() {
-  console.log('sending out entries request');
   ipcRenderer.send('journal-request', {'command':'namesAndDates'}); 
 }
 
-ipcRenderer.on('goals-reply', (event, arg) => {
-  console.log(arg); 
-  if ((typeof arg === 'object') && (arg.length == 0 || typeof arg[0] !== 'string')) {
-    // add all goals to the goalslist
-    let goalsList = document.getElementById('goals-list');
+async function addRewardsAndDifficulty() {
+  ipcRenderer.send('rewards-request', {'command':'getRewards'}); 
+}
+
+function createGoalItem(goal) {
+  let li = document.createElement('li');
+  li.setAttribute('id', `goal-list-item-${goal[0]}`);
+  let goalButton = document.createElement('button')
+  let text = document.createTextNode(goal[0]);
+  goalButton.appendChild(text); 
+  goalButton.setAttribute('type', 'button');
+  goalButton.setAttribute('data-section', 'single-goal');
+  goalButton.setAttribute('data-request', 'goals'); 
+  goalButton.setAttribute('data-command', 'goalAndTaskList'); 
+  goalButton.setAttribute('data-title', goal[0]); 
+
+  li.appendChild(goalButton); 
+  // li.appendChild(text);
+  let progress = document.createElement('progress')
+  progress.setAttribute('max', 100);
+  console.log(`progress is ${goal[1]}`);
+  progress.setAttribute('value', goal[1]);
+  progress.setAttribute('id', `progress-${goal[0]}`);
+  li.appendChild(progress);
+  return li;
+}
+
+ipcRenderer.on('goals-load-reply', (event, arg) => {
+  // arg should be a list of goals
+  let goalsList = document.getElementById('goals-list');
+  console.log(`goal is ${arg}`);
+
+  // add all goals and progress to the list. 
+  if (arg.length > 1) {
     arg.forEach(goal => {
-      let li = document.createElement('li');
-      let text = document.createTextNode(goal[0]);
-      li.appendChild(text);
-      let progress = document.createElement('progress')
-      progress.setAttribute('max', 100);
-      progress.setAttribute('value', goal[1]);
-      li.appendChild(progress);
+      let li = createGoalItem(goal); 
       goalsList.appendChild(li);
     });
+  }
 
-    if (arg.length == 0) {
-      let overview = document.getElementById('overview-section');
-      let button = document.querySelector('.new-goal-button');
-      let message = document.createElement('h4');
-      let text = document.createTextNode("It looks like you haven't set any goals yet. Click the button below to get started!"); 
-      message.appendChild(text); 
-      overview.insertBefore(message, button);
+  else if (arg.length == 1) {
+    let goal = arg[0]; 
+    let goalSearch = document.getElementById(`goal-list-item-${goal[0]}`);
+    // goal is not in the list - add a new element!
+    if (goalSearch == null) {
+      let li = createGoalItem(goal); 
+      goalsList.appendChild(li); 
+      // if we are creating a new goal AND there were no goals before, REMOVE the no-goals message.
+      let message = document.getElementById('no-goals-message'); 
+      if (message != null)
+        message.remove();
+    }
+  
+    // goal IS in the task list - update or delete
+    else {
+      if (goal[1] >= 0) {
+        let progress = document.getElementById(`progress-${goal[0]}`);
+        progress.setAttribute('value', goal[1])
+      // progress is < 0, the intention is to delete 
+      } else
+        goalSearch.remove();
     }
   }
-})
 
-ipcRenderer.on('rewards-reply', (event, arg) => {
-  console.log(arg); 
-  let keys = Object.keys(arg); 
-  if ((typeof arg === 'object') && (keys.length > 0) && (arg.length < 3 || arg[2] != 0)) {
-    let rewardList = document.getElementById('rewards-list');
-    keys.forEach(reward => {
-      let li = document.createElement('li');
-      let span = document.createElement('span'); 
-      let text = document.createTextNode(reward); 
-      // this will have x-stars for the difficulty
-      let stars = document.createTextNode(` ${arg[reward]}-stars`);
-      li.appendChild(text);
-      span.appendChild(stars);
-      li.appendChild(span);
-      rewardList.appendChild(li);
-    })
-  }
-  
-  if (keys.length == 0) {
-    let rewardSection = document.getElementById('rewards-section');
-    let rewardList = document.querySelector('.rewards-list');
+  // no goals... want to give the user the message
+  else if (arg.length == 0) {
+    let overview = document.getElementById('overview-section');
     let message = document.createElement('h4');
-    let text = document.createTextNode("It looks like you haven't set any rewards yet. Create a reward below to get started!");
+    message.setAttribute('id', 'no-goals-message'); 
+    let text = document.createTextNode("It looks like you haven't set any goals yet. Click the button below to get started!"); 
     message.appendChild(text); 
-    rewardSection.insertBefore(message, rewardList);
+    overview.insertBefore(message, goalsList);
   }
 })
 
@@ -100,8 +113,8 @@ ipcRenderer.on('journal-reply', (event, arg) => {
 
 function init() {
   addGoalsAndProgress();
-  addRewardsAndDifficulty(); 
-  addEntriesAndDates(); 
+  // addRewardsAndDifficulty(); 
+  // addEntriesAndDates(); 
 }
 
 init(); 

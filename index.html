@@ -26,18 +26,20 @@
       <div class="app-content" id="overview-section">
         <h1 class="page-title">Goals Overview</h1>
         <ul class="page-list" id="goals-list"></ul>
-        <button class="new-item" type="button" data-section="single-goal">Add a new goal</button>
+        <button class="new-item" type="button" data-section="single-goal" data-request="goals" data-command="goalAndTaskList" data-title="yabadabadooPleaseDontNameAGoalLikeThis">Add a new goal</button>
       </div>
       <div class="app-content hide" id="single-goal-section">
         <input class="title-input" id="goal-name" type="text" placeholder="Goal title here...">
-        <h4>After adding the title, begin adding tasks below</h4>
+        <progress id="goal-progress-bar" max="100" value="0"></progress>
         <ul class="updating-list" id="goal-task-list"></ul>
-        <form class="updating-form" id="task-entry-form">
+        <button class="show-hide-button" id="task-form-show-button">Add another task</button>
+        <form class="updating-form hide" id="task-entry-form">
           <input id="task-name" type="text" placeholder="Enter task name here..."><br>
           <label for="task-difficulty">Difficulty (between 1 and 5)</label>
           <input id="task-difficulty" type="range" name="task-difficulty" min="1" max="5" step="1"><br>
           <input class="submit-input" type="submit" data-section="single-goal" value="Add Task">
         </form>
+        <!--I want to remove all form data after this button is clicked :0-->
         <button class="save-button" id="save-goal-button" type="button" data-section="overview">Save goal</button>
       </div>
       <div class="app-content hide" id="journal-section">
@@ -72,6 +74,8 @@
           <input id="theme-setting" type="checkbox" name="theme-setting"><br>
           <label for="details-setting">Display details and tips: </label>
           <input id="detail-setting" type="checkbox" name="detail-setting"><br>
+          <label for="rewards-setting">Get a random reward when task of equal weight is completed: </label>
+          <input id="rewards-setting" type="checkbox" name="rewards-setting"><br>
           <input class="save-button" type="submit" data-section="settings" value="Update settings">
         </form>
       </div>

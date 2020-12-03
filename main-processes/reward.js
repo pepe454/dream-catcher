@@ -6,17 +6,19 @@ let store = new Store();
 ipcMain.on('rewards-request', (event, arg) => {
   console.log(arg); 
   let payload = null; 
+  let response = 'rewards-reply'; 
   if (arg.command == 'getRewards')
     payload = getRewards(); 
-  else if (arg.command == 'getRandomReward')
+  else if (arg.command == 'getRandomReward') {
+    response = 'random-reply'; 
     payload = getRandomReward();
-  else if (arg.command == 'setReward')
+  } else if (arg.command == 'setReward')
     payload = setReward(arg.title, arg.difficulty);
   else if (arg.command == 'deleteReward')
     payload = deleteReward(arg.title);
   else
     payload = 'Invalid command!';
-  event.sender.send('rewards-reply', payload);
+  event.sender.send('random-reply', payload);
 })
 
 function getRewards() {

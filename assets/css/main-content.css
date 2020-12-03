@@ -104,4 +104,16 @@
   -ms-flex-line-pack: center;
       align-content: center;
 }
+
+#task-form-show-button {
+  display: block;
+}
+
+.orange-star {
+  color: orange;
+}
+
+.difficulty-span {
+  float: right;
+}
 /*# sourceMappingURL=main-content.css.map */
