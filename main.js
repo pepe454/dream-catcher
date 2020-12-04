@@ -18,8 +18,10 @@ function initialize() {
 
   function createWindow () {
     win = new BrowserWindow({
-      width: 1080,
-      height: 680,
+      width: 900,
+      height: 800,
+      minHeight: 730,
+      minWidth: 800,
       frame: false, 
       title: app.getName(), 
       webPreferences: {

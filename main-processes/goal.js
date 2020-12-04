@@ -4,7 +4,7 @@ const {ipcMain} = require('electron')
 let store = new Store();
 
 ipcMain.on('goals-request', (event, arg) => {
-  console.log(arg);
+  // console.log(arg);
   let payload = null; 
   let response = 'goals-load-reply';
   if (arg.command == 'goalsAndProgress')
@@ -74,7 +74,6 @@ function updateProgress(title) {
   let actualProgress = 0;
   let requiredProgress = 0; 
   let taskList = store.get(`goals.${title}.taskList`);
-  console.log(taskList); 
   let keys = Object.keys(taskList); 
   keys.forEach(task => {
     let difficulty = parseInt(taskList[task].difficulty);
@@ -100,7 +99,6 @@ function setTask(title, taskName, difficulty, completed) {
   if (completed == null) 
     completed = store.get(`goals.${title}.taskList.${taskName}.completed`);
   store.set(`goals.${title}.taskList.${taskName}`, {'difficulty': difficulty, 'completed': completed}); 
-  console.log(store.get(`goals.${title}`));
   let progress = updateProgress(title); 
   let task = {
     'taskName': taskName, 

@@ -4,11 +4,13 @@ const {ipcMain} = require('electron')
 let store = new Store();
 
 ipcMain.on('rewards-request', (event, arg) => {
-  console.log(arg); 
+  // console.log(arg); 
   let payload = null; 
   let response = 'rewards-reply'; 
   if (arg.command == 'getRewards')
     payload = getRewards(); 
+  else if (arg.command == 'getReward')
+    payload = getReward(arg.title); 
   else if (arg.command == 'getRandomReward') {
     response = 'random-reply'; 
     payload = getRandomReward();
@@ -18,11 +20,25 @@ ipcMain.on('rewards-request', (event, arg) => {
     payload = deleteReward(arg.title);
   else
     payload = 'Invalid command!';
-  event.sender.send('random-reply', payload);
+  event.sender.send(response, payload);
+  // console.log(payload); 
 })
 
 function getRewards() {
-  return store.get('rewards');
+  let rewards = new Array(); 
+  let keys = Object.keys(store.get('rewards'));
+  keys.forEach(key => {
+    let difficulty = store.get(`rewards.${key}`);
+    rewards.push([key, difficulty])
+  });
+  // list of length >= 1 for ALL goals.
+  return rewards; 
+}
+
+function getReward(title) {
+  if (!store.has(`rewards.${title}`))
+    return `A reward named ${title} does not exist!`;
+  return [[title, store.get(`rewards.${title}`)]];
 }
 
 function setReward(title, difficulty) {
@@ -32,12 +48,13 @@ function setReward(title, difficulty) {
   else
     rewards[title] = difficulty;
   store.set('rewards', rewards);
-  return [title, difficulty, 0];
+  return [[title, difficulty]];
 }
 
 function deleteReward(title) {
   if (!store.has(`rewards.${title}`))
     return `Reward with title ${title} does not exist`;
+  store.delete(`rewards.${title}`);
   store.delete(`rewards.${title}`);
   return 'Reward deleted successfully'; 
 }
@@ -52,9 +69,9 @@ function getRandomReward(difficulty) {
   while(true) {
     let index = Math.floor(Math.random() * len); 
     let key = keys[index];
-    console.log(key); 
+    // console.log(key); 
     let currDiff = store.get(`rewards.${key}`);
-    console.log(currDiff);
+    // console.log(currDiff);
     // within difficulty +/- 1 of the reward 
     if ((currDiff <= difficulty + 1) && (currDiff >= difficulty - 1))
       return [key, difficulty];

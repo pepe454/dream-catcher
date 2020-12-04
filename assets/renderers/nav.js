@@ -11,15 +11,20 @@ document.body.addEventListener('click', (event) => {
     if (event.target.dataset.command === 'setTask') {
       args['taskName'] = event.target.dataset.taskname;
       // see if the checkbox is checked
-      console.log(event.target.checked); 
+      // console.log(event.target.checked); 
       args['completed'] = !event.target.hasAttribute('checked'); 
       args['difficulty'] = event.target.dataset.difficulty;
     }
+    // console.log('sending payload and request: ');
+    // console.log(request, args); 
     ipcRenderer.send(request, args); 
   }
 
-  if (event.target.dataset.section)
+  if (event.target.dataset.section) {
     handleSectionTrigger(event);
+    console.log('trying to switch now'); 
+
+  }
 })
 
 function handleSectionTrigger (event) {

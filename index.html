@@ -18,46 +18,134 @@
   <main class="main-content">
     <nav class="navigation">
       <button class="nav-button top-nav" type="button" data-section="overview">Overview</button>
-      <button class="nav-button" type="button" data-section="journal">Reflections</button>
+      <button class="nav-button" type="button" data-section="goal-information">How to set Goals</button>
+      <button class="nav-button" type="button" data-section="journal">Journal</button>
+      <button class="nav-button" type="button" data-section="journal-information">Reflections</button>
       <button class="nav-button" type="button" data-section="rewards">Rewards</button>
       <button class="nav-button" type="button" data-section="settings">Settings</button>
     </nav>
     <div class="section-content">
       <div class="app-content" id="overview-section">
         <h1 class="page-title">Goals Overview</h1>
+        <button class="info-button">
+          <i class="fas fa-info-circle" data-section="goal-information" title="Tips for setting goals"></i>
+        </button>
         <ul class="page-list" id="goals-list"></ul>
         <button class="new-item" type="button" data-section="single-goal" data-request="goals" data-command="goalAndTaskList" data-title="yabadabadooPleaseDontNameAGoalLikeThis">Add a new goal</button>
       </div>
       <div class="app-content hide" id="single-goal-section">
         <input class="title-input" id="goal-name" type="text" placeholder="Goal title here...">
-        <progress id="goal-progress-bar" max="100" value="0"></progress>
+        <progress id="goal-progress-bar" max="100" value="0"></progress><br>
         <ul class="updating-list" id="goal-task-list"></ul>
-        <button class="show-hide-button" id="task-form-show-button">Add another task</button>
+        <button class="show-hide-button" id="task-form-show-button">
+          Add another task
+          <i class="fas fa-angle-double-down"></i>
+        </button>
         <form class="updating-form hide" id="task-entry-form">
           <input id="task-name" type="text" placeholder="Enter task name here..."><br>
           <label for="task-difficulty">Difficulty (between 1 and 5)</label>
           <input id="task-difficulty" type="range" name="task-difficulty" min="1" max="5" step="1"><br>
           <input class="submit-input" type="submit" data-section="single-goal" value="Add Task">
         </form>
-        <!--I want to remove all form data after this button is clicked :0-->
         <button class="save-button" id="save-goal-button" type="button" data-section="overview">Save goal</button>
+      </div>
+      <div class="app-content hide" id="goal-information-section">
+        <h1 class="page-title">How to set goals effectively</h1>
+        <p id="goal-information" class="information-pg">
+          When setting a goal, compose a sharp, clear target to set your sights on. 
+          It should be so sharp that you know exactly when you have succeeded or more work is required. 
+        </p>
+        <ol>
+          <li>"Compete in a 5k" is better than "Exercise more"</li>
+          <li>"Do not smoke for 1 week" rather than "Quit smoking"</li>
+          <li>"Join a club" instead of "Make new connections"</li>
+        </ol>
+        <p>
+          After you define your goal it is critical to create a solid gameplan that will lead you to success. 
+          Don't make any one task a massive undertaking. 
+          One very successful man by the name of Stephen Duneier described his goal-planning process as follows: 
+        </p>
+        <blockquote>
+          "Because of the continuous, compounding nature of all those millions of decisions that we face on
+          a regular basis, even a marginal improvement in our process can have a huge impact on our results."
+        </blockquote> 
+        <p>
+          That's right. There isn't some magic secret or special sauce that goal-acheivers have that the rest don't. 
+          What they do have is the ability to set easy tasks which ever so slightly tip the scales of fate in favor 
+          of success. Over time these small decisions and actions end up amounting to a whole lot. 
+          Instead of thinking that you need to finish a whole book in one sitting, you might think about reading  
+          one chapter, one paragraph, or even one sentence at a time. 
+          You will find that it is much more manageable to read 50 sentences every day, about 5 minutes of reading,
+          rather than an entire section in one setting.  
+          Here is link to the Ted Talk for more information: 
+          <a href="https://www.youtube.com/watch?v=TQMbvJNRpLE">How to acheive your most ambitious goals</a>
+        </p>
       </div>
       <div class="app-content hide" id="journal-section">
         <h1 class="page-title">Entries</h1>
+        <button class="info-button">
+          <i class="fas fa-info-circle" data-section="journal-information" title="Journal tips"></i>
+        </button>
+        <br>
+        <!-- <button data-section="journal-information">Reflection tips</button><br> -->
         <ul class="page-list" id="journal-entries-list"></ul>
-        <button class="new-item" type="button" data-section="single-entry">Add new entry</button>
+        <!--Empty out the page after I click this button. yabadabadoo!!-->
+        <button class="new-item" type="button" data-section="single-entry" data-request="journal" data-command="entryAndText" data-title="yabadabadooPleaseDontNameAGoalLikeThis">Write a new entry</button>
       </div>
       <div class="app-content hide" id="single-entry-section">
         <form id="journal-entry-form">
-          <input class="title-input" id="entry-name" type="text" name="entry-name" placeholder="Journal entry title here..."><br>
-          <input id="entry-text-input" type="text"><br>
-          <input class="save-button" type="submit" data-section="journal" value="Save entry">
+          <input class="title-input" id="entry-title" name="entry-name" placeholder="Journal entry title here..."><br>
+          <h4 id="last-modified"></h4>
+          <!-- 
+            how to get around this? maybe on the click event in nav, check to see if the journal-section is currently hidden
+            if it's not hidden, then use a dialog box and force them to confirm; i.e. continue without saving or save and exit. 
+            complicated logic
+            also disply DOT when the entry has been changed. perhaps a data-boolean on the entry-text-input
+            what if I just save automatically whenever a user navigates away AS WELL. seems like an idea. hmmm
+          -->
+          <h5>Note that in this version, your progress will be lost if you do not save below.</h5>
+          <!-- <input class="hide" id="entry-text-input" type="text" rows="5" cols="50"><br> -->
+          <textarea id="entry-text-input" rows="5" cols="50"></textarea><br>
+          <input class="save-button" type="submit" value="Save entry">
         </form>
+      </div>
+      <div class="app-content hide" id="journal-information-section">
+        <h1 class="page-title">Reflecting on your Life</h1>
+        <p>
+          There is no doubt that your motivations and values play a big role in determing what you 
+          truly want. By reflecting on those deep values you may have, it can help you shape your life 
+          story into the ideal life you would like to have. It will also help you to realize the life 
+          you wish to avoid. By having a clear picture of life you want to lead and the life you want to
+          avoid, you immediately get a clear set of targets to aim at. 
+        </p>
+        <br>
+        <p>
+          For example, if you value your health, you can think right away about what your ideal life would 
+          look like. Namely, it may include: eating a healthy, balanced diet, getting a strenuous dose 
+          of excercise daily, and seeing doctors and dentists regularly to check on health and, if needed,
+          provide treatments. Your ideal life would also include ways to stabilize and strengthen your mental
+          health through getting better sleep, taking time to decompress and meditate, and build strong 
+          family relationships.
+        </p>
+        <br>
+        <p>
+          However, we can't always have our cake and eat it too. Some values may conflict with one another,
+          and you will have to prioritize which ones you value more highly. For example, you desire to 
+          become well educated, perhaps through attending University, may conflict with your desire 
+          to acheive strong mental health if your area of study if particularly demanding.  
+          Here is another great video on the true gravity of understanding your values and what your 
+          ideal life looks like: <a href="https://www.youtube.com/watch?v=__beOdwZ2pU">Make your goals SHARP and CLEAR</a>.
+        </p>
       </div>
       <div class="app-content hide" id="rewards-section">
         <h1 class="page-title">Rewards</h1>
         <ul class="updating-list" id="rewards-list"></ul>
-        <form class="updating-form" id="reward-entry-form">
+        <button class="show-hide-button" id="reward-form-show-button">
+          Add another reward
+          <!-- <i class="far fa-info-circle"></i> -->
+          <i class="fas fa-angle-double-down"></i>
+        </button>
+        <form class="updating-form hide" id="reward-entry-form">
           <label for="reward-title">Reward description: </label>
           <input id="reward-title" type="text" name="reward-title"><br>
           <label for="reward-difficulty">Reward size: choose a larger reward for a more difficult task </label>
@@ -66,7 +154,7 @@
         </form>
       </div>
       <div class="app-content hide" id="settings-section">
-        <h1>Settings</h1>
+        <h1 class="page-title">Settings</h1>
         <form id="settings-form">
           <label for="welcome-setting">Welcome page: </label>
           <input id="welcome-setting" type="checkbox" name="welcome-setting"><br>

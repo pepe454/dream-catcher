@@ -1,33 +1,36 @@
 const {ipcRenderer} = require('electron')
 const { dialog } = require('electron').remote
 
-let rewardForm = document.getElementById('reward-entry-form');
-let taskForm = document.getElementById('task-entry-form');
-let taskFormShowButton = document.getElementById('task-form-show-button');
-
-rewardForm.addEventListener('submit', (event) => {
+/*
+  Form submit events
+ */
+let entryForm = document.getElementById('journal-entry-form'); 
+entryForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  const title = document.getElementById("reward-title").value; 
-  const difficulty = document.getElementById("reward-difficulty").value; 
-  if ((title == '') || (difficulty == null)) {
-    // add error message here 
-    console.log("no input given!");
-    let message = "Title or difficulty not specified"; 
+  const title = document.getElementById("entry-title").value; 
+  const text = document.getElementById("entry-text-input").value; 
+  if ((title === '') || (text === '')) {
+    let message = ''; 
+    if (title === '')
+      message = 'Entry title is missing. ';
+    if (text === '')
+      message += 'Entry text is missing.';
     dialog.showMessageBox({'buttons':['Cancel'], 'message': message});
   } else {
-    let payload = {'command': 'setReward', 'title': title, 'difficulty': difficulty};
-    ipcRenderer.send('rewards-request', payload); 
+    let payload = {'command': 'setEntry', 'title': title, 'text': text};
+    console.log('sending payload');
+    console.log(payload); 
+    ipcRenderer.send('journal-request', payload); 
   }
 })
 
+let taskForm = document.getElementById('task-entry-form');
 taskForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const goalName = document.getElementById("goal-name").value; 
   const taskName = document.getElementById("task-name").value; 
   const difficulty = document.getElementById("task-difficulty").value; 
   if ((goalName === '') || (difficulty === '') || (taskName === '')) {
-    // add error message here 
-    console.log("insufficient input given!");
     let message = ''; 
     if (goalName === '')
       message = 'Goal title is missing. ';
@@ -44,25 +47,79 @@ taskForm.addEventListener('submit', (event) => {
       'taskName': taskName,
       'difficulty': difficulty, 
     };
-    // console.log('sending goal payload');
     document.getElementById('task-name').value = ''; 
     ipcRenderer.send('goals-request', payload); 
   }
 })
 
+let rewardForm = document.getElementById('reward-entry-form');
+rewardForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const title = document.getElementById("reward-title").value; 
+  const difficulty = document.getElementById("reward-difficulty").value; 
+  if ((title == '') || (difficulty == null)) {
+    let message = "Title or difficulty not specified"; 
+    dialog.showMessageBox({'buttons':['Cancel'], 'message': message});
+  } else {
+    let payload = {'command': 'setReward', 'title': title, 'difficulty': difficulty};
+    ipcRenderer.send('rewards-request', payload); 
+  }
+})
+
+/*
+  Show and tell
+*/
+// a little bit of button logic to hide and shohw the addTasksForm. cute
+let taskFormShowButton = document.getElementById('task-form-show-button');
 taskFormShowButton.addEventListener("click", (event) => {
   let taskForm = document.getElementById('task-entry-form');
-  // console.log(taskForm.classList); 
   if (taskForm.classList.contains('hide')) {
     taskForm.classList.remove('hide');
     taskFormShowButton.innerHTML = ""; 
     taskFormShowButton.appendChild(document.createTextNode('Hide new task form'));
+    let icon = document.createElement('i');
+    icon.classList.add('fas');
+    icon.classList.add('fa-angle-double-up');
+    taskFormShowButton.appendChild(icon); 
   } else { 
     taskForm.classList.add('hide'); 
     taskFormShowButton.innerHTML = ""; 
     taskFormShowButton.appendChild(document.createTextNode('Add another task')); 
+    let icon = document.createElement('i');
+    icon.classList.add('fas');
+    icon.classList.add('fa-angle-double-down');
+    taskFormShowButton.appendChild(icon); 
   }
 })
+
+// a little bit of button logic to hide and shohw the addRewardForm. cute
+let rewardFormShowButton = document.getElementById('reward-form-show-button');
+rewardFormShowButton.addEventListener("click", (event) => {
+  let rewardForm = document.getElementById('reward-entry-form');
+  if (rewardForm.classList.contains('hide')) {
+    rewardForm.classList.remove('hide');
+    rewardFormShowButton.innerHTML = ""; 
+    rewardFormShowButton.appendChild(document.createTextNode('Hide new reward form'));
+    let icon = document.createElement('i');
+    icon.classList.add('fas');
+    icon.classList.add('fa-angle-double-up');
+    rewardFormShowButton.appendChild(icon); 
+  } else { 
+    rewardForm.classList.add('hide'); 
+    rewardFormShowButton.innerHTML = ""; 
+    rewardFormShowButton.appendChild(document.createTextNode('Add another reward')); 
+    let icon = document.createElement('i');
+    icon.classList.add('fas');
+    icon.classList.add('fa-angle-double-down');
+    rewardFormShowButton.appendChild(icon); 
+  }
+})
+
+/*
+ipc events to update form data:
+  task-form
+  entry-form
+*/
 
 function createTaskItem(task) {
   let taskListItem = document.createElement('li');
@@ -132,7 +189,6 @@ ipcRenderer.on('task-form-reply', (event, arg) => {
                   starSpan.classList.add('orange-star'); 
                 child.appendChild(starSpan);
               }
-              // child.textContent = ` ${arg['difficulty']}-stars`; 
             }
           })
         }
@@ -151,15 +207,12 @@ ipcRenderer.on('task-form-reply', (event, arg) => {
   if (length > 2)
     document.getElementById("goal-progress-bar").value = arg['progress'];
 
-  // update the GoalsList page. cute way to do it :)
   ipcRenderer.send('goals-request', {'command':'getGoal', 'title':arg['title']}); 
 })
 
 // add a current goal to the task scheisse. do something cheeky with button
+// want to set a fresh page
 ipcRenderer.on('task-load-reply', (event, arg) => {
-  // want to set a fresh page
-  console.log('task-load-reply received'); 
-  console.log(arg); 
   document.getElementById("goal-name").value = "";
   document.getElementById("goal-task-list").innerHTML = ""; 
 
@@ -180,50 +233,38 @@ ipcRenderer.on('task-load-reply', (event, arg) => {
       let taskListItem = createTaskItem(taskObject); 
       taskList.appendChild(taskListItem); 
     })
+
+    // no tasks so far!
+    if(keys.length == 0){
+      document.getElementById("task-entry-form").classList.remove('hide'); 
+      let taskFormShowButton = document.getElementById('task-form-show-button');
+      taskFormShowButton.innerHTML = ""; 
+      taskFormShowButton.appendChild(document.createTextNode('Hide new task form'));
+    }
+
   // show the new task form to make it easier
   } else {
     document.getElementById("task-entry-form").classList.remove('hide'); 
+    let taskFormShowButton = document.getElementById('task-form-show-button');
+    taskFormShowButton.innerHTML = ""; 
+    taskFormShowButton.appendChild(document.createTextNode('Hide new task form'));
+    let icon = document.createElement('i');
+    icon.classList.add('fas');
+    icon.classList.add('fa-angle-double-up');
+    taskFormShowButton.appendChild(icon); 
   }
 })
 
+// add the clicked entry to the form OR set it all to blank canvas
+ipcRenderer.on('entry-load-reply', (event, arg) => {
+  document.getElementById("entry-title").value = "";
+  document.getElementById("entry-text-input").value = ""; 
+  document.getElementById("last-modified").innerHTML = ""; 
 
-
-/*
-Use for checking tasks off or deleting tasks
-checkbox.addEventListener('change', (event) => {
-  if (event.target.checked) {
-    alert('checked');
-  } else {
-    alert('not checked');
-  }
-})
-*/
-
-// FIXME: need to do work on this homie!
-ipcRenderer.on('rewards-reply', (event, arg) => {
-  console.log(arg); 
-  let keys = Object.keys(arg); 
-  if ((typeof arg === 'object') && (keys.length > 0) && (arg.length < 3 || arg[2] != 0)) {
-    let rewardList = document.getElementById('rewards-list');
-    keys.forEach(reward => {
-      let li = document.createElement('li');
-      let span = document.createElement('span'); 
-      let text = document.createTextNode(reward); 
-      // this will have x-stars for the difficulty
-      let stars = document.createTextNode(` ${arg[reward]}-stars`);
-      li.appendChild(text);
-      span.appendChild(stars);
-      li.appendChild(span);
-      rewardList.appendChild(li);
-    })
-  }
-  
-  if (keys.length == 0) {
-    let rewardSection = document.getElementById('rewards-section');
-    let rewardList = document.querySelector('.rewards-list');
-    let message = document.createElement('h4');
-    let text = document.createTextNode("It looks like you haven't set any rewards yet. Create a reward below to get started!");
-    message.appendChild(text); 
-    rewardSection.insertBefore(message, rewardList);
+  // update with data from the button press
+  if (arg != null) {
+    document.getElementById("entry-title").value = arg[0]; 
+    document.getElementById("entry-text-input").value = arg[1].text; 
+    document.getElementById("last-modified").appendChild(document.createTextNode(arg[1].lastEdited))
   }
 })

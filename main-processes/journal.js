@@ -4,21 +4,24 @@ const {ipcMain} = require('electron')
 let store = new Store();
 
 ipcMain.on('journal-request', (event, arg) => {
-  console.log(arg); 
+  // console.log(arg); 
   let payload = null; 
+  let response = 'journal-load-reply'; 
   if (arg.command == 'namesAndDates')
     payload = getNamesAndDates(); 
+  else if (arg.command == 'entryAndText') {
+    payload = getEntryAndText(arg.title); 
+    response = 'entry-load-reply'; 
+  }
   else if (arg.command == 'getEntry')
     payload = getEntry(arg.title);
-  else if (arg.commaand == 'setEntry')
+  else if (arg.command == 'setEntry')
     payload = setEntry(arg.title, arg.text);
-  else if (arg.command == 'createEntry')
-    payload = createEntry(arg.title, arg.text);
   else if (arg.command == 'deleteEntry')
     payload = deleteEntry(arg.title);
   else
     payload = 'Invalid command!';
-  event.sender.send('journal-load-reply', payload);
+  event.sender.send(response, payload);
 })
 
 function getNamesAndDates() {
@@ -31,6 +34,14 @@ function getNamesAndDates() {
   return namesAndDates;
 }
 
+function getEntryAndText(title) {
+  // useful for a "dumb load" 
+  if (!store.has(`journal.${title}`))
+    return null;
+  let entry = store.get(`journal.${title}`);
+  return [title, entry]; 
+}
+
 function getEntry(title) {
   if (!store.has(`journal.${title}`))
     return null;
@@ -39,26 +50,17 @@ function getEntry(title) {
 }
 
 function setEntry(title, text) {
+  if (!store.has(`journal.${title}`))
+    createEntry(title); 
   let today = new Date().toLocaleDateString();
-  let journal = store.get('journal');
-  if (Object.keys(journal).includes(title)) {
-    let entry = journal[title];
-    entry.text = text; 
-    entry.lastEdited = today;     
-  } else {
-    journal[title] = {
-      text: text, 
-      lastEdited: today
-    }
-  }
-  store.set('journal', journal);
-  return 'Entry updated successfully'; 
+  store.set(`journal.${title}`, {'text': text, 'lastEdited':today});
+  return getEntry(title); 
 }
 
 function createEntry(title, text) {
   if (!store.has(`journal.${title}`))
     return `An entry with the title ${title} exists in the journal`;
-  setEntry(title, text); 
+  store.set(`journal.${title}`, {'text': '', 'lastEdited':''});
   return 'Entry created successfully';
 }
 

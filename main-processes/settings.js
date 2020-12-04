@@ -1,4 +1,10 @@
 const settings = require('electron-settings');
+const {ipcMain} = require('electron')
+
+async function getAllSettings(){
+  let allSettings = await settings.getAll(); 
+  return allSettings; 
+}
 
 async function updateSetting(setting, value) {
   await settings.set(setting, value);

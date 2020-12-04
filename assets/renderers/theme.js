@@ -8,6 +8,7 @@ async function setGreetingAndBGImage () {
   nighttime.setHours(16)
 
   let todString = ''
+  // day mode
   if (timeOfDay < morning)
     todString = 'evening'
   else if (timeOfDay < afternoon)
@@ -16,6 +17,9 @@ async function setGreetingAndBGImage () {
     todString = 'midday' 
   else
     todString = 'evening' 
+  
+  // night mode 
+  todString = 'evening'; 
 
   document.querySelector('.menu-bar').classList.add(todString)
   document.querySelector('.navigation').classList.add(todString)

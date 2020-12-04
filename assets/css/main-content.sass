@@ -1,6 +1,6 @@
 .main-content
   margin: 0 auto
-  height: 100vh
+  height: 100%
   display: flex
   &.morning
     background-color: hsl(0, 0%, 96%)
@@ -13,6 +13,8 @@
     color: #c5c5c5
 
 .navigation
+  width: 110px
+  height: 100%
   display: flex
   flex-direction: column
   background-image: none
@@ -32,15 +34,16 @@
     color: #7a7a7a
     text-align: left
   .top-nav
-    margin-top: 20px
+    margin-top: 30px
   .nav-button:focus
     color: #c9c9c9
   .is-selected
     color: #c9c9c9
 
 .section-content
-  margin-left: 50px
-  margin-top: 35px
+  padding: 40px
+  margin-left: 20px
+  width: 500px
 
 .save-button
   background-color: transparent
@@ -76,3 +79,40 @@
 
 .difficulty-span
   float: right
+
+#journal-entries-list
+  span
+    float: right
+
+#entry-text-input
+  width: 100% 
+  height: 50%
+
+.page-title
+  margin-bottom: 15px
+  display: inline-block
+.title-input
+  margin-bottom: 15px
+
+.info-button
+  border: none
+  background: transparent
+  outline: none
+
+.page-list-button
+  border: none
+  background: transparent
+  outline: none
+  color: #c5c5c5
+
+.show-hide-button
+  border: none
+  background: transparent
+  outline: none
+  margin-bottom: 10px
+  color: #62b6cf
+
+.fa-angle-double-down
+  padding: 5px
+.fa-angle-double-up
+  padding: 5px

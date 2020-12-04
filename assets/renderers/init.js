@@ -12,10 +12,15 @@ async function addRewardsAndDifficulty() {
   ipcRenderer.send('rewards-request', {'command':'getRewards'}); 
 }
 
+async function getAllSettings() {
+  ipcRenderer.send('settings-request', {'command':'getSettings'}); 
+}
+
 function createGoalItem(goal) {
   let li = document.createElement('li');
   li.setAttribute('id', `goal-list-item-${goal[0]}`);
   let goalButton = document.createElement('button')
+  goalButton.classList.add('page-list-button'); 
   let text = document.createTextNode(goal[0]);
   goalButton.appendChild(text); 
   goalButton.setAttribute('type', 'button');
@@ -28,7 +33,6 @@ function createGoalItem(goal) {
   // li.appendChild(text);
   let progress = document.createElement('progress')
   progress.setAttribute('max', 100);
-  console.log(`progress is ${goal[1]}`);
   progress.setAttribute('value', goal[1]);
   progress.setAttribute('id', `progress-${goal[0]}`);
   li.appendChild(progress);
@@ -36,10 +40,7 @@ function createGoalItem(goal) {
 }
 
 ipcRenderer.on('goals-load-reply', (event, arg) => {
-  // arg should be a list of goals
   let goalsList = document.getElementById('goals-list');
-  console.log(`goal is ${arg}`);
-
   // add all goals and progress to the list. 
   if (arg.length > 1) {
     arg.forEach(goal => {
@@ -48,6 +49,7 @@ ipcRenderer.on('goals-load-reply', (event, arg) => {
     });
   }
 
+  // may need to update or add new or delete
   else if (arg.length == 1) {
     let goal = arg[0]; 
     let goalSearch = document.getElementById(`goal-list-item-${goal[0]}`);
@@ -83,38 +85,151 @@ ipcRenderer.on('goals-load-reply', (event, arg) => {
   }
 })
 
-ipcRenderer.on('journal-reply', (event, arg) => {
+function createEntryItem(entry) {
+  let entryListItem = document.createElement('li');
+  entryListItem.setAttribute('id', `entry-list-item-${entry[0]}`);
+  let entryButton = document.createElement('button'); 
+  entryButton.classList.add('page-list-button'); 
+  entryButton.appendChild(document.createTextNode(entry[0])); 
+  entryButton.setAttribute('type', 'button');
+  entryButton.setAttribute('data-section', 'single-entry');
+  entryButton.setAttribute('data-request', 'journal'); 
+  entryButton.setAttribute('data-command', 'entryAndText'); 
+  entryButton.setAttribute('data-title', entry[0]); 
+
+  let span = document.createElement('span'); 
+  span.setAttribute('id', `entry-modified-${entry[0]}`);
+  span.appendChild(document.createTextNode( `${entry[1]}`));
+  entryListItem.appendChild(entryButton); 
+  entryListItem.appendChild(span);
+  return entryListItem;
+}
+
+ipcRenderer.on('journal-load-reply', (event, arg) => {
   console.log(arg); 
-  let keys = Object.keys(arg); 
-  if ((typeof arg === 'object') && (keys.length > 0) && (arg.length < 3 || arg[2] != 0)) {
-    let entryList = document.getElementById('journal-entries-list');
-    keys.forEach(entry => {
-      let li = document.createElement('li');
-      let span = document.createElement('span'); 
-      let text = document.createTextNode(entry); 
-      // this will have x-stars for the difficulty
-      let date = document.createTextNode(` Last modified: ${arg[entry]}`);
-      li.appendChild(text);
-      span.appendChild(date);
-      li.appendChild(span);
-      entryList.appendChild(li);
+  let length = arg.length; 
+  let entryList = document.getElementById('journal-entries-list');
+
+  // no need to do checks. we're getting the whole shebang here 
+  if (length > 1) {
+    arg.forEach(entry => {
+      let entryListItem = createEntryItem(entry); 
+      entryList.appendChild(entryListItem);
     })
   }
+
+  // need to check. could be an update of the last modified date
+  else if (length == 1) {
+    let entry = arg[0]; 
+    let entrySearch = document.getElementById(`entry-list-item-${entry[0]}`);
+    if (entrySearch == null) {
+      let entryListItem = createEntryItem(entry); 
+      entryList.appendChild(entryListItem);
+      // if we are creating a new entry AND there were no entries before, REMOVE the no-entries message.
+      let message = document.getElementById('empty-journal-message'); 
+      if (message != null)
+        message.remove();
+    }
+
+    // update the the LastEdited span
+    else {
+      let lastEdited = document.getElementById(`entry-modified-${entry[0]}`);
+      lastEdited.innerHTML = ""; 
+      lastEdited.appendChild(document.createTextNode(entry[1])); 
+    }
+  }
   
-  if (keys.length == 0) {
+  // add empty journal message
+  else {
     let journalSection = document.getElementById('journal-section');
-    let entryList = document.getElementById('journal-entries-list');
     let message = document.createElement('h4');
     let text = document.createTextNode("It looks like you haven't written any entries yet. Click the button below to get started!"); 
     message.appendChild(text); 
+    message.setAttribute('id', 'empty-journal-message'); 
     journalSection.insertBefore(message, entryList);
+  }
+})
+
+function createRewardListItem(reward) {
+  let rewardListItem = document.createElement('li');
+  rewardListItem.setAttribute('id', `reward-list-item-${reward[0]}`);
+  rewardListItem.appendChild(document.createTextNode(reward[0]));
+
+  // stars, make it pretty :) 
+  let difficulty = document.createElement('span'); 
+  difficulty.classList.add('difficulty-span'); 
+  difficulty.setAttribute('id',`reward-difficulty-${reward[0]}`);
+  console.log(reward[1]); 
+  for (let i = 1; i < 6; i++) {
+    let starSpan = document.createElement('span'); 
+    starSpan.classList.add('fa');
+    starSpan.classList.add('fa-star');
+    if (i <= reward[1])  
+      starSpan.classList.add('orange-star'); 
+    difficulty.appendChild(starSpan);
+  }
+  rewardListItem.appendChild(difficulty);
+  return rewardListItem;
+}
+
+ipcRenderer.on('rewards-reply', (event, arg) => {
+  console.log(arg); 
+  let rewardList = document.getElementById('rewards-list');
+  if (arg.length > 1) {
+    arg.forEach(reward => {
+      let rewardListItem = createRewardListItem(reward); 
+      rewardList.appendChild(rewardListItem);
+    })
+  }
+
+  else if (arg.length == 1) {
+    let rewardSearch = document.getElementById(`reward-list-item-${arg[0]}`);
+    if (rewardSearch == null) {
+      let rewardListItem = createRewardListItem(arg[0]); 
+      rewardList.appendChild(rewardListItem);
+      // if we are creating a new reward AND there were no rewards before, REMOVE the no-rewards message.
+      let message = document.getElementById('empty-rewards-message'); 
+      if (message != null)
+        message.remove();
+    }
+
+    // update difficulty
+    else {
+      let difficulty = document.getElementById(`reward-difficulty-${reward[0]}`);
+      difficulty.innerHTML = ""; 
+      for (let i = 1; i < 6; i++) {
+        let starSpan = document.createElement('span'); 
+        starSpan.classList.add('fa');
+        starSpan.classList.add('fa-star');
+        if (i <= reward[1])  
+          starSpan.classList.add('orange-star'); 
+        difficulty.appendChild(starSpan);
+      }
+    }
+  }
+  
+  // no rewards :(
+  else {
+    let rewardSection = document.getElementById('rewards-section');
+    let message = document.createElement('h4');
+    message.setAttribute('id', 'empty-rewards-message'); 
+    message.appendChild(document.createTextNode("It looks like you haven't set any rewards yet. Create a reward below to get started!")); 
+    rewardSection.insertBefore(message, rewardList);
+    document.getElementById("reward-entry-form").classList.remove('hide'); 
+    let rewardFormShowButton = document.getElementById('reward-form-show-button');
+    rewardFormShowButton.innerHTML = ""; 
+    let icon = document.createElement('i');
+    icon.classList.add('far');
+    icon.classList.add('fa-angle-double-down');
+    rewardFormShowButton.appendChild(document.createTextNode('Hide new reward form'));
+    rewardFormShowButton.appendChild(icon); 
   }
 })
 
 function init() {
   addGoalsAndProgress();
-  // addRewardsAndDifficulty(); 
-  // addEntriesAndDates(); 
+  addEntriesAndDates(); 
+  addRewardsAndDifficulty(); 
 }
 
 init(); 
