@@ -8,15 +8,24 @@ html
   height: 100%
   font-family: 'Poppins'
   font-size: 14px
-  line-height: 1.5
+  line-height: 1.7
   overflow: hidden
-  color: hsl(0, 0%, 22%)
-  background-color: hsl(0, 0%, 96%)
+  // color: hsl(0, 0%, 22%)
+  // background-color: hsl(0, 0%, 96%)
 
 body
   margin: 0
-  height: 100vh
+  // height: 100vh
   // overflow-y: auto
+  &.morning
+    background-color: hsl(0, 0%, 96%)
+    color: #3c3d3f
+  &.midday
+    background: #242525
+    color: #c5c5c5
+  &.evening
+    background: #242525
+    color: #c5c5c5
 
 input, button
   font-family: 'Poppins'
@@ -32,6 +41,8 @@ a
 h1, h2, p
   margin: 0
 
+
+  
 ul
   list-style-type: none
   padding-inline-start: 0px

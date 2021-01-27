@@ -1,6 +1,7 @@
 const {ipcRenderer} = require('electron')
 
 document.body.addEventListener('click', (event) => {
+  // console.log(event);
   // load things with this
   if (event.target.dataset.request) {
     const request = `${event.target.dataset.request}-request`;
@@ -30,7 +31,7 @@ document.body.addEventListener('click', (event) => {
 function handleSectionTrigger (event) {
   hideAllSectionsAndDeselectButtons()
   // Highlight clicked button
-  event.target.classList.add('is-selected')
+  event.target.classList.add('mdc-list-item--activated')
   // Display the current section
   const sectionId = `${event.target.dataset.section}-section`
   document.getElementById(sectionId).classList.remove('hide')
@@ -42,8 +43,8 @@ function hideAllSectionsAndDeselectButtons () {
     section.classList.add('hide')
   })
 
-  const buttons = document.querySelectorAll('.is-selected')
+  const buttons = document.querySelectorAll('.mdc-list-item--activated')
   Array.prototype.forEach.call(buttons, (button) => {
-    button.classList.remove('is-selected')
+    button.classList.remove('mdc-list-item--activated')
   })
 }

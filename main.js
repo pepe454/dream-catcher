@@ -3,6 +3,7 @@ const glob = require('glob')
 const { app, BrowserWindow } = require('electron')
 const Store = require('electron-store');
 
+
 let win = null;
 const debug = /--debug/.test(process.argv[2]);
 
@@ -15,7 +16,6 @@ function initialize() {
   makeSingleInstance();
   initStore();
   loadMains();
-
   function createWindow () {
     win = new BrowserWindow({
       width: 900,

@@ -1,34 +1,42 @@
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 400;
   src: local("Poppins"), local("Poppins"), url(fonts/Poppins-Regular.otf) format("opentype");
 }
-
 html {
   height: 100%;
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.7;
   overflow: hidden;
-  color: #383838;
-  background-color: whitesmoke;
 }
 
 body {
   margin: 0;
-  height: 100vh;
+}
+body.morning {
+  background-color: whitesmoke;
+  color: #3c3d3f;
+}
+body.midday {
+  background: #242525;
+  color: #c5c5c5;
+}
+body.evening {
+  background: #242525;
+  color: #c5c5c5;
 }
 
 input, button {
-  font-family: 'Poppins';
+  font-family: "Poppins";
 }
 
 /*button
-  outline: none
-  border: none
-  background: none
-  */
+ * outline: none
+ * border: none
+ * background: none
+ * */
 a {
   color: #706fb3;
 }
@@ -45,5 +53,4 @@ ul {
 
 .hide {
   display: none;
-}
-/*# sourceMappingURL=global.css.map */
+}/*# sourceMappingURL=global.css.map */

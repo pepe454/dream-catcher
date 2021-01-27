@@ -1,0 +1,18 @@
+$primary: cyan
+$surface: #212121
+$on-surface: #fff
+    
+:root
+    --mdc-theme-primary: #{$primary}
+    --mdc-theme-surface: #{$surface}
+    --mdc-theme-on-surface: #{$on-surface}
+    --mdc-typography-subtitle2-font-family: 'Poppins'
+
+.mdc-drawer .mdc-list-item
+    color: $on-surface
+
+.mdc-drawer .mdc-list-item__graphic
+    color: transparentize($on-surface, .13)
+
+.mdc-drawer .mdc-list-item--activated, .mdc-drawer .mdc-list-item--activated .mdc-list-item__graphic 
+    color: $primary

@@ -2,9 +2,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/global.min.css">
   <link rel="stylesheet" href="assets/css/menu-bar.css">
   <link rel="stylesheet" href="assets/css/main-content.css">
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="assets/css/material-theme.min.css">
   <script src="https://kit.fontawesome.com/1c9144b004.js" crossorigin="anonymous"></script>
 </head>
 
@@ -14,16 +18,44 @@
     <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
     <button class="menubar-btn" id="close-btn"><i class="fas fa-times"></i></button>
   </div>
-
   <main class="main-content">
-    <nav class="navigation">
-      <button class="nav-button top-nav" type="button" data-section="overview">Overview</button>
+    <!-- <button class="nav-button top-nav" type="button" data-section="overview">Overview</button>
       <button class="nav-button" type="button" data-section="goal-information">How to set Goals</button>
       <button class="nav-button" type="button" data-section="journal">Journal</button>
       <button class="nav-button" type="button" data-section="journal-information">Reflections</button>
       <button class="nav-button" type="button" data-section="rewards">Rewards</button>
-      <button class="nav-button" type="button" data-section="settings">Settings</button>
-    </nav>
+      <button class="nav-button" type="button" data-section="settings">Settings</button> -->
+    <aside class="mdc-drawer">
+      <div class="mdc-drawer__content">
+        <nav class="mdc-list">
+          <a class="mdc-list-item mdc-list-item--activated" href="#" data-section="overview">
+            <span class="mdc-list-item__ripple"></span>
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">flag</i>
+            <span class="mdc-list-item__text">Goals</span>
+          </a>
+          <a class="mdc-list-item" href="#" data-section="journal">
+            <span class="mdc-list-item__ripple"></span>
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
+            <span class="mdc-list-item__text">Journal</span>
+          </a>
+          <a class="mdc-list-item" href="#" data-section="journal-information">
+            <span class="mdc-list-item__ripple"></span>
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">restore</i>
+            <span class="mdc-list-item__text">Reflections</span>
+          </a>
+          <a class="mdc-list-item" href="#" data-section="rewards">
+            <span class="mdc-list-item__ripple"></span>
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">emoji_events</i>
+            <span class="mdc-list-item__text">Rewards</span>
+          </a>
+          <a class="mdc-list-item" href="#" data-section="settings">
+            <span class="mdc-list-item__ripple"></span>
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
+            <span class="mdc-list-item__text">Settings</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
     <div class="section-content">
       <div class="app-content" id="overview-section">
         <h1 class="page-title">Goals Overview</h1>

@@ -22,7 +22,8 @@ async function setGreetingAndBGImage () {
   todString = 'evening'; 
 
   document.querySelector('.menu-bar').classList.add(todString)
-  document.querySelector('.navigation').classList.add(todString)
+  // document.querySelector('.navigation').classList.add(todString)
+  document.querySelector('body').classList.add(todString)
   document.querySelector('.main-content').classList.add(todString)
 }
 
